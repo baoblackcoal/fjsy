@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>东南大学电工电子实践AI助教问答</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Add Marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        :root {
+            --primary: #6a1b9a;
+            --primary-light: #9c4dcc;
+            --secondary: #3949ab;
+            --dark: #283593;
+            --light: #f5f5f5;
+        }
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background-color: var(--light);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .chat-container {
+            flex: 1;
+            padding: 2rem 0;
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+            margin: 1rem 0;
+        }
+        .message {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        .message-content {
+            padding: 1rem;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+        .user-message .message-content {
+            background-color: #e3f2fd;
+            margin-left: auto;
+            text-align: right;
+        }
+        .ai-message .message-content {
+            background-color: #f3e5f5;
+            margin-right: auto;
+        }
+        .user-message {
+            display: flex;
+            justify-content: flex-end;
+        }
+        .ai-message {
+            display: flex;
+            justify-content: flex-start;
+        }
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 0 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+        .user-avatar {
+            background-color: var(--secondary);
+        }
+        .ai-avatar {
+            background-color: var(--primary);
+        }
+        .input-area {
+            background-color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+        .send-btn {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        .send-btn:hover {
+            background-color: var(--primary-light);
+            border-color: var(--primary-light);
+        }
+        .form-control {
+            border-radius: 20px;
+            padding: 0.75rem 1.5rem;
+        }
+        .form-control:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 0.25rem rgba(156, 77, 204, 0.25);
+        }
+        .footer {
+            padding: 1rem 0;
+            background-color: #fff;
+            border-top: 1px solid #eee;
+            margin-top: auto;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+            border: 3px solid rgba(106, 27, 154, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            margin-left: 60px;
+            padding: 0.5rem 1rem;
+            background-color: #f3e5f5;
+            border-radius: 10px;
+            width: fit-content;
+        }
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 1px;
+            animation: bounce 1.3s linear infinite;
+        }
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+        @keyframes bounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-4px); }
+        }
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        .back-btn:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        code {
+            color: #d63384;
+            background-color: #f8f9fa;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.9rem;
+        }
+        pre code {
+            padding: 0;
+            background-color: transparent;
+        }
+        .message-content ul {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .message-content li {
+            margin-bottom: 0.5rem;
+        }
+        .message-content h3, .message-content h4 {
+            margin-top: 1rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-12 d-flex justify-content-between align-items-center">
+                    <a href="index.html" class="back-btn">
+                        <i class="bi bi-arrow-left me-2"></i> 返回首页
+                    </a>
+                    <h1 class="h4 m-0">东南大学电工电子实践AI助教</h1>
+                    <div></div> <!-- Empty div for flex spacing -->
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="chat-container">
+            <div class="container">
+                <div id="chat-messages">
+                    <!-- AI Welcome Message -->
+                    <div class="message ai-message">
+                        <div class="avatar ai-avatar">
+                            <i class="bi bi-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <h3>你好，我是东南电工电子实践AI助教！</h3>
+                            
+                            <p>欢迎进行<strong>电工电子实践学习</strong>！我是你的AI助教，在这里协助你完成教学大纲中的各项实验。我可以：</p>
+                            
+                            <ul>
+                                <li>解释电路、数电、模电的基础概念与实验原理</li>
+                                <li>提供常用元器件信息和OWON FDS四合一仪器使用指导</li>
+                                <li>辅助你进行Multisim电路设计与仿真</li>
+                                <li>启发设计型实验（如信号源、抢答器等）</li>
+                                <li>和你一起分析实验现象，排查故障</li>
+                                <li>请提出你的具体问题，我会引导与我探索</li>
+                            </ul>
+                            
+                            <p><em>我们开始吧！</em></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="input-area mb-4">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <form id="chat-form" class="d-flex align-items-center">
+                            <input type="text" id="user-input" class="form-control me-2" placeholder="请输入你的问题..." autocomplete="off">
+                            <button type="submit" class="btn send-btn text-white px-4">
+                                <i class="bi bi-send"></i>
+                            </button>
+                        </form>
+                        <div class="text-center mt-2">
+                            <small class="text-muted" style="font-size: 0.75rem; opacity: 0.7;">AI助教生成的内容仅供参考，重要信息请核查。</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <p class="mb-0">&copy; 2025 东南大学电气工程学院 | 电工电子实践课程AI助教</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatForm = document.getElementById('chat-form');
+            const userInput = document.getElementById('user-input');
+            const chatMessages = document.getElementById('chat-messages');
+            
+            // API configuration
+            const API_URL = "https://dashscope.aliyuncs.com/api/v1/apps/6fa3490dc00b4b189167c450618057d5/completion";
+            const API_KEY = "sk-26f29c480fdb450aa7e165a9e4b2b091";
+            
+            // Sample questions for quick access
+            const sampleQuestions = [
+                "请问东南大学的电子电工包括哪些实验呢?",
+                "请问输出波形失真怎么办?",
+                "请问电子电工的常用仪器有哪些呢？ FDS示波器带宽是多少?",
+                "为什么FDS电源最大电压是15V而我只能调到10V就不能调上去了?",
+                "与AI助教对话需要注意哪些呢?"
+            ];
+
+            // Add sample questions buttons
+            const questionsContainer = document.createElement('div');
+            questionsContainer.className = 'container mb-3';
+            questionsContainer.innerHTML = `
+                <div class="row">
+                    <div class="col-12">
+                        <div class="d-flex flex-wrap gap-2 justify-content-center">
+                            ${sampleQuestions.map(q => `
+                                <button class="btn btn-sm btn-outline-secondary sample-question">${q}</button>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+            const inputArea = document.querySelector('.input-area');
+            const chatFormContainer = document.querySelector('#chat-form').closest('.container');
+            inputArea.insertBefore(questionsContainer, chatFormContainer);
+
+            // Add event listeners to sample question buttons
+            document.querySelectorAll('.sample-question').forEach(button => {
+                button.addEventListener('click', function() {
+                    userInput.value = this.textContent;
+                    // Trigger form submission
+                    const event = new Event('submit');
+                    chatForm.dispatchEvent(event);
+                });
+            });
+
+            chatForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const message = userInput.value.trim();
+                if (!message) return;
+                
+                // Add user message
+                addMessage(message, 'user');
+                userInput.value = '';
+                
+                // Show typing indicator
+                const typingIndicator = document.createElement('div');
+                typingIndicator.className = 'typing-indicator';
+                typingIndicator.innerHTML = `
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                `;
+                chatMessages.appendChild(typingIndicator);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // Call Alibaba Bailian API with SSE (Server-Sent Events)
+                getBailianResponse(message, typingIndicator);
+            });
+            
+            function addMessage(content, sender) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}-message`;
+                
+                let avatar = '';
+                if (sender === 'user') {
+                    avatar = `<div class="avatar user-avatar">
+                                <i class="bi bi-person"></i>
+                              </div>`;
+                } else {
+                    avatar = `<div class="avatar ai-avatar">
+                                <i class="bi bi-robot"></i>
+                              </div>`;
+                }
+                
+                // Format content with code blocks if needed
+                if (sender === 'user') {
+                    content = formatContent(content);
+                }
+                
+                messageDiv.innerHTML = `
+                    ${avatar}
+                    <div class="message-content">
+                        ${sender === 'ai' ? `<p>${content}</p>` : content}
+                    </div>
+                `;
+                
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                return messageDiv;
+            }
+            
+            function formatContent(content) {
+                // Convert line breaks to paragraphs
+                content = content.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
+                if (!content.startsWith('<p>')) content = '<p>' + content;
+                if (!content.endsWith('</p>')) content = content + '</p>';
+                
+                // Format code blocks
+                content = content.replace(/```([^`]+)```/g, '<pre><code>$1</code></pre>');
+                
+                return content;
+            }
+            
+            function formatMarkdownResponse(text) {
+                // Use marked.js to convert markdown to HTML
+                marked.setOptions({
+                    breaks: true,           // Convert \n to <br>
+                    gfm: true,              // Use GitHub Flavored Markdown
+                    headerIds: false,       // Don't add IDs to headers
+                    mangle: false,          // Don't mangle email addresses
+                    sanitize: false,        // Don't sanitize HTML (it's from our AI, should be safe)
+                    silent: true            // Don't throw errors
+                });
+                
+                // Parse markdown to HTML
+                let html = marked.parse(text);
+                
+                // Ensure the content is properly wrapped
+                if (!html.trim().startsWith('<')) {
+                    html = '<p>' + html + '</p>';
+                }
+                
+                return html;
+            }
+            
+            function getBailianResponse(message, typingIndicator) {
+                // Create AI message container with empty content
+                const aiMessageDiv = addMessage('', 'ai');
+                const aiMessageContent = aiMessageDiv.querySelector('.message-content');
+                
+                // Prepare request payload
+                const requestData = {
+                    input: {
+                        prompt: message
+                    },
+                    parameters: {
+                        incremental_output: true
+                    },
+                    debug: {}
+                };
+                
+                // Use fetch with the EventSource API approach for SSE
+                fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'Content-Type': 'application/json',
+                        'X-DashScope-SSE': 'enable'
+                    },
+                    body: JSON.stringify(requestData)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    
+                    // Remove typing indicator once we begin receiving response
+                    typingIndicator.remove();
+                    
+                    // Set up event reader for SSE response
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder();
+                    let buffer = '';
+                    let fullText = '';
+                    
+                    function processText() {
+                        return reader.read().then(({ done, value }) => {
+                            if (done) {
+                                if (buffer) {
+                                    processSSEChunk(buffer);
+                                }
+                                return;
+                            }
+                            
+                            // Decode the received chunk and add to buffer
+                            const chunk = decoder.decode(value, { stream: true });
+                            buffer += chunk;
+                            
+                            // Process any complete SSE messages
+                            const lines = buffer.split('\n\n');
+                            buffer = lines.pop() || ''; // Keep the last (potentially incomplete) part
+                            
+                            // Process each complete SSE message
+                            for (const line of lines) {
+                                processSSEChunk(line);
+                            }
+                            
+                            // Continue reading
+                            return processText();
+                        });
+                    }
+                    
+                    function processSSEChunk(chunk) {
+                        // Find data portion in SSE format
+                        const dataMatch = chunk.match(/data:(.+)$/m);
+                        if (dataMatch && dataMatch[1]) {
+                            try {
+                                const responseData = JSON.parse(dataMatch[1]);
+                                if (responseData.output && responseData.output.text) {
+                                    // Append new text to the full response
+                                    const newText = responseData.output.text;
+                                    fullText += newText;
+                                    
+                                    // Update the AI message content with parsed markdown
+                                    aiMessageContent.innerHTML = formatMarkdownResponse(fullText);
+                                    
+                                    // Fix any code blocks to ensure proper syntax highlighting
+                                    document.querySelectorAll('pre code').forEach(block => {
+                                        block.className = 'language-text';
+                                    });
+                                    
+                                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                                }
+                            } catch (e) {
+                                console.error('Error parsing SSE data:', e);
+                            }
+                        }
+                    }
+                    
+                    return processText();
+                })
+                .catch(error => {
+                    console.error('Error fetching from Bailian API:', error);
+                    typingIndicator.remove();
+                    
+                    // Show error message if API call fails
+                    aiMessageContent.innerHTML = `
+                        <p>抱歉，我暂时无法连接到服务器，请稍后再试。</p>
+                        <p class="text-danger">错误: ${error.message}</p>
+                    `;
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                });
+            }
+            
+            // Focus input field on page load
+            userInput.focus();
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 
