@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FJSY Chat AI - 智能助教</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%);
+        }
+        .chat-container {
+            height: calc(100vh - 200px);
+        }
+        .typing-animation {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #3b82f6;
+            border-radius: 50%;
+            margin: 0 2px;
+            animation: typing 1.4s infinite both;
+        }
+        .typing-animation:nth-child(2) { animation-delay: 0.2s; }
+        .typing-animation:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+        .message-fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 flex flex-col h-screen">
+    <!-- 顶部导航 -->
+    <nav class="gradient-bg text-white p-4 shadow-lg">
+        <div class="container mx-auto flex items-center justify-between">
+            <div class="flex items-center">
+                <a href="student-courses.html" class="text-white hover:text-gray-200 mr-6">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    返回课程
+                </a>
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center mr-3">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold" id="courseName">AI助教</h1>
+                        <p class="text-sm opacity-90" id="modeIndicator">智能辅导模式</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 模式切换 (仅在问答模式下显示) -->
+            <div id="modeSwitch" class="hidden bg-white/20 rounded-lg p-1 flex">
+                <button id="guideMode" onclick="switchMode('guide')" 
+                        class="px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                    引导模式
+                </button>
+                <button id="qaMode" onclick="switchMode('qa')" 
+                        class="px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                    问答模式
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主聊天区域 -->
+    <div class="flex-1 flex">
+        <!-- 左侧聊天区域 -->
+        <div class="flex-1 flex flex-col">
+            <!-- 聊天消息区域 -->
+            <div class="flex-1 overflow-y-auto p-4" id="chatMessages">
+                <!-- 欢迎消息 -->
+                <div class="flex items-start mb-4 message-fade-in">
+                    <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                        <i class="fas fa-robot text-white"></i>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-lg max-w-3xl">
+                        <div class="font-semibold text-blue-800 mb-2">AI助教</div>
+                        <div class="text-gray-700" id="welcomeMessage">
+                            欢迎使用FJSY Chat AI智能助教！我将陪伴您完成实验学习的每一步。
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 输入区域 -->
+            <div class="bg-white border-t p-4">
+                <div class="flex space-x-3">
+                    <input type="text" 
+                           id="messageInput" 
+                           placeholder="请输入您的问题..." 
+                           class="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                           onkeypress="handleKeyPress(event)">
+                    <button onclick="sendMessage()" 
+                            class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                
+                <!-- 满意度评价 -->
+                <div id="satisfactionRating" class="hidden mt-3 flex items-center justify-center space-x-4">
+                    <span class="text-sm text-gray-600">本次回答是否满意？</span>
+                    <button onclick="rateSatisfaction(true)" 
+                            class="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600">
+                        <i class="fas fa-thumbs-up mr-1"></i>满意
+                    </button>
+                    <button onclick="rateSatisfaction(false)" 
+                            class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">
+                        <i class="fas fa-thumbs-down mr-1"></i>不满意
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧侧边栏 (仅在问答模式下显示) -->
+        <div id="sidebar" class="hidden w-80 border-l bg-white p-4">
+            <h3 class="font-bold text-gray-800 mb-4">常用问题</h3>
+            <div class="space-y-2" id="commonQuestions">
+                <!-- 常用问题将通过JavaScript动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentCourse = null;
+        let chatMode = 'preview'; // 'preview' 或 'qa'
+        let currentSubMode = 'guide'; // 'guide' 或 'qa' (仅在qa模式下有效)
+        let isTyping = false;
+
+        // 常用问题数据
+        const commonQuestions = {
+            'analog-circuits': [
+                '如何使用万用表测量电阻？',
+                '三极管的工作原理是什么？',
+                '运算放大器的基本电路有哪些？',
+                '如何分析放大电路的频率响应？',
+                '示波器如何调节合适的显示波形？'
+            ],
+            'digital-circuits': [
+                '逻辑门的真值表如何理解？',
+                '组合逻辑电路如何设计？',
+                '时序逻辑电路的特点是什么？',
+                '触发器的工作原理？',
+                '计数器电路如何工作？'
+            ],
+            'plc-control': [
+                'PLC的基本结构包括哪些？',
+                '梯形图编程语言的特点？',
+                '如何配置PLC的输入输出？',
+                '定时器和计数器如何使用？',
+                '模拟量处理的方法？'
+            ]
+        };
+
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCourseInfo();
+            initializeChat();
+        });
+
+        // 加载课程信息
+        function loadCourseInfo() {
+            const courseData = localStorage.getItem('currentCourse');
+            const mode = localStorage.getItem('chatMode');
+            
+            if (courseData) {
+                currentCourse = JSON.parse(courseData);
+                document.getElementById('courseName').textContent = currentCourse.name;
+            }
+            
+            if (mode) {
+                chatMode = mode;
+                updateModeDisplay();
+            }
+        }
+
+        // 更新模式显示
+        function updateModeDisplay() {
+            const modeIndicator = document.getElementById('modeIndicator');
+            const modeSwitch = document.getElementById('modeSwitch');
+            const sidebar = document.getElementById('sidebar');
+            const welcomeMessage = document.getElementById('welcomeMessage');
+
+            if (chatMode === 'preview') {
+                modeIndicator.textContent = '预习助教模式';
+                modeSwitch.classList.add('hidden');
+                sidebar.classList.add('hidden');
+                welcomeMessage.textContent = '欢迎进入实验预习环节！我将引导您了解实验的基本原理和操作要点。请告诉我您想了解的内容。';
+            } else {
+                modeIndicator.textContent = '实验助教模式';
+                modeSwitch.classList.remove('hidden');
+                updateSubModeDisplay();
+                welcomeMessage.textContent = '我是您的实验助教！在实验过程中遇到任何问题都可以随时向我提问。';
+            }
+        }
+
+        // 更新子模式显示
+        function updateSubModeDisplay() {
+            const guideMode = document.getElementById('guideMode');
+            const qaMode = document.getElementById('qaMode');
+            const sidebar = document.getElementById('sidebar');
+
+            if (currentSubMode === 'guide') {
+                guideMode.classList.add('bg-white', 'text-blue-600');
+                guideMode.classList.remove('text-white');
+                qaMode.classList.remove('bg-white', 'text-blue-600');
+                qaMode.classList.add('text-white');
+                sidebar.classList.add('hidden');
+            } else {
+                qaMode.classList.add('bg-white', 'text-blue-600');
+                qaMode.classList.remove('text-white');
+                guideMode.classList.remove('bg-white', 'text-blue-600');
+                guideMode.classList.add('text-white');
+                sidebar.classList.remove('hidden');
+                loadCommonQuestions();
+            }
+        }
+
+        // 切换模式
+        function switchMode(mode) {
+            currentSubMode = mode;
+            updateSubModeDisplay();
+        }
+
+        // 初始化聊天
+        function initializeChat() {
+            // 可以在这里添加初始化逻辑
+        }
+
+        // 加载常用问题
+        function loadCommonQuestions() {
+            const questionsContainer = document.getElementById('commonQuestions');
+            const questions = commonQuestions[currentCourse?.id] || [];
+            
+            questionsContainer.innerHTML = '';
+            questions.forEach(question => {
+                const questionElement = document.createElement('button');
+                questionElement.className = 'w-full text-left p-3 text-sm bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors';
+                questionElement.textContent = question;
+                questionElement.onclick = () => sendPredefinedQuestion(question);
+                questionsContainer.appendChild(questionElement);
+            });
+        }
+
+        // 发送预定义问题
+        function sendPredefinedQuestion(question) {
+            document.getElementById('messageInput').value = question;
+            sendMessage();
+        }
+
+        // 处理键盘事件
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        // 发送消息
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message || isTyping) return;
+            
+            // 添加用户消息
+            addMessage(message, 'user');
+            input.value = '';
+            
+            // 模拟AI回复
+            simulateAIResponse(message);
+        }
+
+        // 添加消息
+        function addMessage(content, sender) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'flex items-start mb-4 message-fade-in';
+            
+            if (sender === 'user') {
+                messageDiv.className += ' flex-row-reverse';
+                messageDiv.innerHTML = `
+                    <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center ml-3 flex-shrink-0">
+                        <i class="fas fa-user text-white"></i>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg max-w-3xl">
+                        <div class="font-semibold text-green-800 mb-2">您</div>
+                        <div class="text-gray-700">${content}</div>
+                    </div>
+                `;
+            } else {
+                messageDiv.innerHTML = `
+                    <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                        <i class="fas fa-robot text-white"></i>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-lg max-w-3xl">
+                        <div class="font-semibold text-blue-800 mb-2">AI助教</div>
+                        <div class="text-gray-700">${content}</div>
+                    </div>
+                `;
+            }
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // 添加打字动画
+        function addTypingIndicator() {
+            const chatMessages = document.getElementById('chatMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typingIndicator';
+            typingDiv.className = 'flex items-start mb-4';
+            typingDiv.innerHTML = `
+                <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                    <i class="fas fa-robot text-white"></i>
+                </div>
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <div class="font-semibold text-blue-800 mb-2">AI助教</div>
+                    <div class="flex items-center">
+                        <span class="mr-2 text-gray-600">正在思考</span>
+                        <div class="typing-animation"></div>
+                        <div class="typing-animation"></div>
+                        <div class="typing-animation"></div>
+                    </div>
+                </div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // 移除打字动画
+        function removeTypingIndicator() {
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        // 模拟AI响应
+        function simulateAIResponse(userMessage) {
+            isTyping = true;
+            addTypingIndicator();
+            
+            // 模拟AI思考时间
+            setTimeout(() => {
+                removeTypingIndicator();
+                
+                let response = generateAIResponse(userMessage);
+                addMessage(response, 'ai');
+                
+                // 显示满意度评价
+                showSatisfactionRating();
+                
+                isTyping = false;
+            }, 1000 + Math.random() * 2000);
+        }
+
+        // 生成AI响应
+        function generateAIResponse(userMessage) {
+            const responses = {
+                preview: [
+                    `很好的问题！让我为您详细解释一下${currentCourse?.name || '这个实验课程'}的相关知识点。首先，我们需要理解基本的理论原理...`,
+                    `在开始实验之前，建议您先了解以下几个关键概念。这将帮助您更好地理解实验过程中的现象...`,
+                    `让我们一步步来分析这个问题。根据您的提问，我建议从以下几个方面进行思考...`
+                ],
+                qa: currentSubMode === 'guide' ? [
+                    `这是一个很实际的问题！让我引导您一步步分析。您觉得可能的原因有哪些呢？`,
+                    `在解决这个问题之前，我们先回顾一下相关的理论知识。您还记得我们在预习中提到的XX原理吗？`,
+                    `遇到这种情况很正常！让我们系统地排查一下可能的原因。建议从以下几个步骤开始...`
+                ] : [
+                    `根据您描述的现象，这通常是由以下几种原因导致的：\n\n1. 电路连接问题\n2. 元件参数不当\n3. 测量方法错误\n\n建议您首先检查...`,
+                    `这个问题的解决方法如下：\n\n首先确认电路连接正确，然后检查元件是否损坏，最后验证测量设备的设置...`,
+                    `${currentCourse?.name || '这门课程'}中经常遇到这类问题。标准的处理流程是：\n\n第一步：...\n第二步：...\n第三步：...`
+                ]
+            };
+            
+            const modeResponses = responses[chatMode] || responses.preview;
+            return modeResponses[Math.floor(Math.random() * modeResponses.length)];
+        }
+
+        // 显示满意度评价
+        function showSatisfactionRating() {
+            const rating = document.getElementById('satisfactionRating');
+            rating.classList.remove('hidden');
+            
+            // 5秒后自动隐藏
+            setTimeout(() => {
+                rating.classList.add('hidden');
+            }, 5000);
+        }
+
+        // 满意度评价
+        function rateSatisfaction(satisfied) {
+            // 这里可以将评价数据保存到CSV或发送到后端
+            console.log('用户满意度:', satisfied ? '满意' : '不满意');
+            
+            document.getElementById('satisfactionRating').classList.add('hidden');
+            
+            // 显示感谢消息
+            const thankMessage = satisfied ? '感谢您的积极反馈！' : '感谢您的反馈，我会努力改进回答质量。';
+            addMessage(thankMessage, 'ai');
+        }
+    </script>
+</body>
+</html> 

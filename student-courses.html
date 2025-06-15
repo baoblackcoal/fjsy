@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FJSY Chat AI - 选择实验课程</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%);
+        }
+        .course-card:hover {
+            transform: translateY(-5px);
+            transition: transform 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- 顶部导航 -->
+    <nav class="gradient-bg text-white p-4">
+        <div class="container mx-auto flex items-center justify-between">
+            <div class="flex items-center">
+                <a href="login.html" class="text-white hover:text-gray-200 mr-6">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    返回登录
+                </a>
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center mr-3">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h1 class="text-xl font-bold">FJSY Chat AI - 学生端</h1>
+                </div>
+            </div>
+            <div class="text-sm opacity-90">
+                <i class="fas fa-user-graduate mr-2"></i>
+                学生模式
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">选择实验课程</h2>
+            <p class="text-gray-600">请选择您要学习的实验课程，体验AI助教的智能辅导</p>
+        </div>
+
+        <!-- 课程网格 -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="coursesGrid">
+            <!-- 课程卡片将通过JavaScript动态生成 -->
+        </div>
+    </div>
+
+    <script>
+        // 课程数据
+        const courses = [
+            {
+                id: 'analog-circuits',
+                name: '模拟电子技术实验',
+                description: '学习基本的模拟电路原理和实验技能',
+                icon: 'fas fa-wave-square',
+                color: 'blue',
+                experiments: 15
+            },
+            {
+                id: 'digital-circuits',
+                name: '数字电路实验',
+                description: '掌握数字逻辑电路的设计与实现',
+                icon: 'fas fa-microchip',
+                color: 'green',
+                experiments: 12
+            },
+            {
+                id: 'plc-control',
+                name: 'PLC控制技术实验',
+                description: '学习可编程逻辑控制器的应用',
+                icon: 'fas fa-cogs',
+                color: 'purple',
+                experiments: 10
+            },
+            {
+                id: 'power-electronics',
+                name: '电力电子技术实验',
+                description: '掌握电力电子器件及其应用',
+                icon: 'fas fa-bolt',
+                color: 'yellow',
+                experiments: 8
+            },
+            {
+                id: 'automation-control',
+                name: '自动控制原理实验',
+                description: '理解自动控制系统的基本原理',
+                icon: 'fas fa-robot',
+                color: 'red',
+                experiments: 11
+            },
+            {
+                id: 'communication-principles',
+                name: '通信原理实验',
+                description: '学习现代通信系统的基本原理',
+                icon: 'fas fa-broadcast-tower',
+                color: 'indigo',
+                experiments: 9
+            }
+        ];
+
+        // 颜色映射
+        const colorClasses = {
+            blue: 'from-blue-400 to-blue-600',
+            green: 'from-green-400 to-green-600',
+            purple: 'from-purple-400 to-purple-600',
+            yellow: 'from-yellow-400 to-yellow-600',
+            red: 'from-red-400 to-red-600',
+            indigo: 'from-indigo-400 to-indigo-600'
+        };
+
+        // 渲染课程卡片
+        function renderCourses() {
+            const coursesGrid = document.getElementById('coursesGrid');
+            coursesGrid.innerHTML = '';
+
+            courses.forEach(course => {
+                const courseCard = document.createElement('div');
+                courseCard.className = 'course-card bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer';
+                
+                courseCard.innerHTML = `
+                    <div class="bg-gradient-to-br ${colorClasses[course.color]} p-6 text-white">
+                        <div class="flex items-center justify-between mb-4">
+                            <i class="${course.icon} text-3xl"></i>
+                            <span class="text-sm opacity-90">${course.experiments}个实验</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">${course.name}</h3>
+                        <p class="text-sm opacity-90">${course.description}</p>
+                    </div>
+                    
+                    <div class="p-6">
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="startPreview('${course.id}')" 
+                                    class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors text-sm font-semibold flex items-center justify-center">
+                                <i class="fas fa-book-open mr-2"></i>
+                                开始预习
+                            </button>
+                            <button onclick="startQA('${course.id}')" 
+                                    class="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors text-sm font-semibold flex items-center justify-center">
+                                <i class="fas fa-comments mr-2"></i>
+                                实验问答
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                coursesGrid.appendChild(courseCard);
+            });
+        }
+
+        // 开始预习
+        function startPreview(courseId) {
+            const course = courses.find(c => c.id === courseId);
+            if (course) {
+                // 将课程信息存储到localStorage
+                localStorage.setItem('currentCourse', JSON.stringify(course));
+                localStorage.setItem('chatMode', 'preview');
+                window.location.href = 'student-chat.html';
+            }
+        }
+
+        // 开始问答
+        function startQA(courseId) {
+            const course = courses.find(c => c.id === courseId);
+            if (course) {
+                // 将课程信息存储到localStorage
+                localStorage.setItem('currentCourse', JSON.stringify(course));
+                localStorage.setItem('chatMode', 'qa');
+                window.location.href = 'student-chat.html';
+            }
+        }
+
+        // 页面加载时渲染课程
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCourses();
+        });
+    </script>
+</body>
+</html> 

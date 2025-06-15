@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>福建水利电力职业技术学院 FJSY Chat AI 智能实验助教</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%);
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            transition: transform 0.3s ease;
+        }
+        .water-wave {
+            background: linear-gradient(45deg, #3b82f6, #1e40af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header Banner -->
+    <header class="gradient-bg text-white">
+        <div class="container mx-auto px-4 py-16">
+            <div class="flex flex-col lg:flex-row items-center">
+                <div class="lg:w-1/2 mb-8 lg:mb-0">
+                    <div class="flex items-center mb-4">
+                        <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mr-4">
+                            <i class="fas fa-brain text-2xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-4xl lg:text-5xl font-bold mb-2">FJSY Chat AI</h1>
+                            <p class="text-xl opacity-90">福建水利电力职业技术学院实验教学智能辅助系统</p>
+                        </div>
+                    </div>
+                    <p class="text-lg mb-8 opacity-90">智慧赋能实验，启迪未来工匠</p>
+                    <div class="flex gap-4">
+                        <a href="login.html" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                            开始使用
+                        </a>
+                        <a href="#features" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white/10 transition-colors">
+                            了解更多
+                        </a>
+                    </div>
+                </div>
+                <div class="lg:w-1/2 text-center">
+                    <div class="relative">
+                        <div class="absolute inset-0 bg-white/10 rounded-full blur-3xl"></div>
+                        <i class="fas fa-graduation-cap text-9xl relative z-10 opacity-80"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 核心助教介绍 -->
+    <section id="features" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">两大核心助教，全程陪伴你的实验之旅</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">基于先进的AI技术，为学生提供个性化、启发式的实验学习体验</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- 实验预习AI助教 -->
+                <div class="feature-card bg-gradient-to-br from-blue-50 to-indigo-100 p-8 rounded-xl shadow-lg">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-book-open text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800">实验预习AI助教</h3>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-500 mr-3 mt-1"></i>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">个性化引导</h4>
+                                <p class="text-gray-600">根据学习风格定制预习路径</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-500 mr-3 mt-1"></i>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">激发兴趣</h4>
+                                <p class="text-gray-600">通过提问和挑战提升预习效果</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-500 mr-3 mt-1"></i>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">夯实理论基础</h4>
+                                <p class="text-gray-600">深入讲解实验原理和方法</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 实验AI助教 -->
+                <div class="feature-card bg-gradient-to-br from-green-50 to-emerald-100 p-8 rounded-xl shadow-lg">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-flask text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800">实验AI助教</h3>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-3 mt-1"></i>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">即时问答</h4>
+                                <p class="text-gray-600">24/7实时解答实验疑问</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-3 mt-1"></i>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">启发式探索</h4>
+                                <p class="text-gray-600">引导学生自主发现问题解决方案</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-3 mt-1"></i>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">培养排错能力</h4>
+                                <p class="text-gray-600">系统化的故障诊断指导</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 核心功能展示 -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">不止于问答，更是强大的教学伙伴</h2>
+                <p class="text-gray-600">全方位提升实验教学质量和学习效果</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-lg text-center hover:shadow-xl transition-shadow">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-lightbulb text-blue-500 text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-800 mb-2">智能引导</h3>
+                    <p class="text-gray-600 text-sm">启发式对话，培养自主学习能力</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-lg text-center hover:shadow-xl transition-shadow">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-database text-green-500 text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-800 mb-2">海量知识</h3>
+                    <p class="text-gray-600 text-sm">覆盖全院多门核心实验课程</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-lg text-center hover:shadow-xl transition-shadow">
+                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-chart-line text-purple-500 text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-800 mb-2">数据洞察</h3>
+                    <p class="text-gray-600 text-sm">为教学提供精准数据分析</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-lg text-center hover:shadow-xl transition-shadow">
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-chalkboard-teacher text-red-500 text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-800 mb-2">教师赋能</h3>
+                    <p class="text-gray-600 text-sm">支持教师自定义与持续优化模型</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 学校介绍 -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">源于水院，服务水院</h2>
+                <p class="text-xl water-wave font-semibold mb-4">科技创新助力"双高校"建设</p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-100 p-8 rounded-xl">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">福建水利电力职业技术学院</h3>
+                        <div class="space-y-4 text-gray-700">
+                            <p class="flex items-center">
+                                <i class="fas fa-map-marker-alt text-blue-500 mr-3"></i>
+                                坐落于福建省永安市
+                            </p>
+                            <p class="flex items-center">
+                                <i class="fas fa-award text-blue-500 mr-3"></i>
+                                国家优质专科高等职业院校
+                            </p>
+                            <p class="flex items-center">
+                                <i class="fas fa-star text-blue-500 mr-3"></i>
+                                福建省"双高校"建设单位
+                            </p>
+                            <p class="flex items-center">
+                                <i class="fas fa-history text-blue-500 mr-3"></i>
+                                办学历史悠久，源于1929年
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h4 class="font-bold text-gray-800 mb-3">专业设置</h4>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div class="flex items-center">
+                                <i class="fas fa-water text-blue-500 mr-2"></i>
+                                水利工程学院
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-bolt text-yellow-500 mr-2"></i>
+                                电力工程学院
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-laptop-code text-green-500 mr-2"></i>
+                                信息工程学院
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-building text-gray-500 mr-2"></i>
+                                建筑工程学院
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-cogs text-purple-500 mr-2"></i>
+                                自动化工程学院
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-road text-red-500 mr-2"></i>
+                                交通工程学院
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50 p-6 rounded-lg">
+                        <p class="text-gray-700 leading-relaxed">
+                            FJSY Chat AI是学院响应国家教育数字化战略、深化产教融合、提升人才培养质量的重要创新成果。
+                            系统紧密结合水利工程、电力工程、自动化工程等优势专业群的实验教学需求，
+                            为建设高水平职业院校贡献科技力量。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">FJSY Chat AI</h3>
+                    <p class="text-gray-300 mb-4">智慧赋能实验教学，助力高质量人才培养</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-white">
+                            <i class="fab fa-weixin text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-300 hover:text-white">
+                            <i class="fab fa-qq text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">快速链接</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="login.html" class="hover:text-white">登录系统</a></li>
+                        <li><a href="#features" class="hover:text-white">功能介绍</a></li>
+                        <li><a href="dashboard.html" class="hover:text-white">数据看板</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">联系我们</h4>
+                    <div class="space-y-2 text-gray-300">
+                        <p><i class="fas fa-envelope mr-2"></i>support@fjsy.edu.cn</p>
+                        <p><i class="fas fa-phone mr-2"></i>0598-8823856</p>
+                        <p><i class="fas fa-map-marker-alt mr-2"></i>福建省永安市</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 福建水利电力职业技术学院. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html> 

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FJSY Chat AI - 教师管理</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%);
+        }
+        .sidebar-active {
+            background-color: #3b82f6;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 flex h-screen">
+    <!-- 左侧导航栏 -->
+    <div class="w-64 bg-white shadow-lg">
+        <div class="bg-gradient-to-r from-blue-600 to-blue-500 text-white p-6">
+            <h1 class="text-lg font-bold">FJSY Chat AI</h1>
+            <p class="text-sm opacity-90">教师管理端</p>
+        </div>
+        <nav class="p-4">
+            <ul class="space-y-2">
+                <li><button onclick="switchTab('overview')" class="w-full text-left p-3 rounded-lg bg-blue-500 text-white" id="tab-overview"><i class="fas fa-tachometer-alt mr-3"></i>首页看板</button></li>
+                <li><button onclick="switchTab('model')" class="w-full text-left p-3 rounded-lg hover:bg-gray-100" id="tab-model"><i class="fas fa-robot mr-3"></i>AI模型管理</button></li>
+                <li><button onclick="switchTab('courses')" class="w-full text-left p-3 rounded-lg hover:bg-gray-100" id="tab-courses"><i class="fas fa-book mr-3"></i>课程与知识库</button></li>
+            </ul>
+            <hr class="my-6">
+            <ul class="space-y-2">
+                <li><a href="index.html" class="block p-3 rounded-lg hover:bg-gray-100"><i class="fas fa-home mr-3"></i>返回首页</a></li>
+                <li><a href="login.html" class="block p-3 rounded-lg hover:bg-gray-100"><i class="fas fa-sign-out-alt mr-3"></i>退出登录</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- 右侧主内容区域 -->
+    <div class="flex-1 flex flex-col">
+        <div class="bg-white shadow-sm p-6 border-b">
+            <h2 id="pageTitle" class="text-2xl font-bold text-gray-800">首页看板</h2>
+        </div>
+        <div class="flex-1 overflow-y-auto p-6">
+            <!-- 首页看板 -->
+            <div id="content-overview" class="tab-content">
+                <div class="grid md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div><p class="text-sm text-gray-600">总问答次数</p><p class="text-2xl font-bold text-blue-600">1,245</p></div>
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center"><i class="fas fa-comments text-blue-600"></i></div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div><p class="text-sm text-gray-600">今日问答</p><p class="text-2xl font-bold text-green-600">89</p></div>
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center"><i class="fas fa-clock text-green-600"></i></div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div><p class="text-sm text-gray-600">满意度</p><p class="text-2xl font-bold text-purple-600">87%</p></div>
+                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center"><i class="fas fa-thumbs-up text-purple-600"></i></div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div><p class="text-sm text-gray-600">活跃课程</p><p class="text-2xl font-bold text-red-600">6</p></div>
+                            <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center"><i class="fas fa-book text-red-600"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI模型管理 -->
+            <div id="content-model" class="tab-content hidden">
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-lg font-bold mb-4">系统提示词设置</h3>
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">实验预习AI助教系统提示词</label>
+                            <textarea rows="6" class="w-full border rounded-lg px-4 py-3" placeholder="输入预习助教的系统提示词...">你是福建水利电力职业技术学院的实验预习AI助教，专门帮助学生进行实验前的预习准备。</textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">实验AI助教系统提示词</label>
+                            <textarea rows="6" class="w-full border rounded-lg px-4 py-3" placeholder="输入实验助教的系统提示词...">你是福建水利电力职业技术学院的实验AI助教，在学生实验过程中提供实时支持。</textarea>
+                        </div>
+                        <div class="flex justify-end space-x-4">
+                            <button class="px-6 py-3 border rounded-lg text-gray-700 hover:bg-gray-50">重置默认</button>
+                            <button class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600">保存设置</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 课程与知识库 -->
+            <div id="content-courses" class="tab-content hidden">
+                <div class="grid lg:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold">课程管理</h3>
+                            <button class="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm"><i class="fas fa-plus mr-2"></i>添加课程</button>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-3 border rounded-lg">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 rounded-full bg-green-500 mr-3"></div>
+                                    <div><p class="font-semibold">模拟电子技术实验</p><p class="text-sm text-gray-500">245次问答</p></div>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button class="text-blue-500 text-sm"><i class="fas fa-edit"></i></button>
+                                    <button class="text-green-500 text-sm"><i class="fas fa-database"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h3 class="text-lg font-bold mb-4">知识库编辑</h3>
+                        <p class="text-gray-500 text-center py-8">请先选择一个课程来编辑知识库</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
+            document.querySelectorAll('[id^="tab-"]').forEach(tab => {
+                tab.classList.remove('bg-blue-500', 'text-white');
+                tab.classList.add('hover:bg-gray-100');
+            });
+            document.getElementById('content-' + tabName).classList.remove('hidden');
+            document.getElementById('tab-' + tabName).classList.add('bg-blue-500', 'text-white');
+            document.getElementById('tab-' + tabName).classList.remove('hover:bg-gray-100');
+            
+            const titles = {
+                overview: '首页看板',
+                model: 'AI模型管理',
+                courses: '课程与知识库'
+            };
+            document.getElementById('pageTitle').textContent = titles[tabName];
+        }
+    </script>
+</body>
+</html> 

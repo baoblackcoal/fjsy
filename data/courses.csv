@@ -1,0 +1,8 @@
+id,name,description,experiments,active,icon,color
+1,模拟电子技术实验,学习基本的模拟电路原理和实验技能,15,true,fas fa-wave-square,blue
+2,数字电路实验,掌握数字逻辑电路的设计与实现,12,true,fas fa-microchip,green
+3,PLC控制技术实验,学习可编程逻辑控制器的应用,10,true,fas fa-cogs,purple
+4,电力电子技术实验,掌握电力电子器件及其应用,8,false,fas fa-bolt,yellow
+5,自动控制原理实验,理解自动控制系统的基本原理,11,true,fas fa-robot,red
+6,通信原理实验,学习现代通信系统的基本原理,9,false,fas fa-broadcast-tower,indigo 
+ 
