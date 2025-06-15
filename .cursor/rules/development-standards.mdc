@@ -1,0 +1,62 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# FJSY Chat AI 开发规范
+
+## 代码风格规范
+
+### HTML规范
+- 使用中文简体作为界面语言
+- 所有页面必须包含TailwindCSS CDN和Font Awesome 6.0
+- 使用语义化HTML标签
+- 保持一致的缩进（2个空格）
+
+### CSS规范
+- 优先使用TailwindCSS类名
+- 自定义样式使用`.gradient-bg`等语义化类名
+- 颜色主题：蓝色渐变（#1e40af → #3b82f6 → #60a5fa）
+- 响应式设计：移动端优先
+
+### JavaScript规范
+- 使用ES6+语法
+- 函数命名采用驼峰命名法
+- 数据存储优先使用localStorage
+- CSV解析使用统一的parseCSV函数
+
+## 数据结构规范
+
+### CSV文件格式
+所有实验数据CSV文件必须包含以下字段：
+- `name` - 实验名称（必需）
+- `principle` - 实验原理（可选）
+- `steps` - 实验步骤（可选）
+
+### localStorage数据
+- `currentCourse` - 当前选择的课程对象
+- `currentExperiment` - 当前选择的实验名称
+- `chatMode` - 聊天模式（'preview' 或 'qa'）
+
+## 用户体验规范
+
+### 页面导航
+- 所有页面必须提供返回上级页面的按钮
+- 使用一致的导航栏设计
+- 页面切换使用平滑过渡动画
+
+### 交互反馈
+- 按钮悬停效果：`hover:bg-*-600`
+- 卡片悬停效果：`transform: translateY(-5px)`
+- 加载状态使用打字动画效果
+
+### 错误处理
+- CSV文件加载失败时提供默认数据
+- 网络请求失败时显示友好错误信息
+- 表单验证提供即时反馈
+
+## 文件命名规范
+- HTML文件：小写字母+连字符（如：student-courses.html）
+- CSS类名：TailwindCSS标准或语义化命名
+- JavaScript函数：驼峰命名法
+- 图片文件：小写字母+连字符，使用webp格式

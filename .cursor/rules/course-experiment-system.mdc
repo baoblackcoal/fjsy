@@ -1,0 +1,130 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# 课程实验系统开发指南
+
+## 系统架构
+
+### 核心页面
+- [student-courses.html](mdc:student-courses.html) - 课程和实验选择页面
+- 实现两级选择流程：课程 → 实验 → 学习模式
+
+### 选择流程
+
+#### 第一级：课程选择
+- 显示6门核心课程：
+  1. 模拟电子技术实验
+  2. 数字电路实验  
+  3. PLC控制技术实验
+  4. 电力电子技术实验
+  5. 自动控制原理实验
+  6. 通信原理实验
+- 每个课程卡片显示：图标、名称、描述、实验数量
+- 点击"查看实验列表"进入第二级
+
+#### 第二级：实验选择
+- 从对应CSV文件加载实验列表
+- 显示实验编号、名称
+- 提供两个学习模式按钮：
+  - "开始预习" - 进入预习模式
+  - "实验问答" - 进入问答模式
+
+### 数据源映射
+
+#### 课程与CSV文件对应关系
+```javascript
+const courses = [
+  {
+    id: 'analog-circuits',
+    csvFile: 'analog_exp.csv'  // [data/analog_exp.csv](mdc:data/analog_exp.csv)
+  },
+  {
+    id: 'digital-circuits', 
+    csvFile: 'digital_exp.csv'  // [data/digital_exp.csv](mdc:data/digital_exp.csv)
+  },
+  {
+    id: 'plc-control',
+    csvFile: 'plc_exp.csv'  // [data/plc_exp.csv](mdc:data/plc_exp.csv)
+  },
+  {
+    id: 'power-electronics',
+    csvFile: 'power_exp.csv'  // [data/power_exp.csv](mdc:data/power_exp.csv)
+  },
+  {
+    id: 'automation-control',
+    csvFile: 'automation_exp.csv'  // [data/automation_exp.csv](mdc:data/automation_exp.csv)
+  },
+  {
+    id: 'communication-principles',
+    csvFile: 'communication_exp.csv'  // [data/communication_exp.csv](mdc:data/communication_exp.csv)
+  }
+];
+```
+
+### 关键函数
+
+#### CSV解析函数
+```javascript
+function parseCSV(csvText) {
+  // 解析CSV文本为对象数组
+  // 第一行为表头，后续行为数据
+}
+```
+
+#### 异步数据加载
+```javascript
+async function loadExperiments(csvFile) {
+  // 从data/目录加载CSV文件
+  // 失败时返回默认数据
+}
+```
+
+#### 页面状态管理
+```javascript
+// 全局状态变量
+let currentCourse = null;
+let currentExperiment = null;
+
+// 页面切换函数
+function selectCourse(courseId)  // 显示实验列表
+function goBack()               // 返回课程列表
+function startLearning(courseId, experimentName, mode)  // 开始学习
+```
+
+### UI状态管理
+
+#### 页面显示控制
+- `#coursePage` - 课程选择页面
+- `#experimentPage` - 实验选择页面
+- 通过`display: none/block`控制显示
+
+#### 导航按钮状态
+- `#backBtn` - 返回课程按钮（实验页面显示）
+- `#loginBtn` - 返回登录按钮（课程页面显示）
+
+### 数据传递
+
+#### localStorage存储
+选择完成后存储以下数据：
+- `currentCourse` - 完整课程对象
+- `currentExperiment` - 实验名称字符串
+- `chatMode` - 学习模式（'preview' 或 'qa'）
+
+### 样式规范
+
+#### 课程卡片
+- 渐变背景色（根据课程类型）
+- 悬停效果：`translateY(-5px)`
+- 响应式网格布局
+
+#### 实验卡片  
+- 编号圆形标识
+- 两个操作按钮并排显示
+- 渐入动画效果
+
+### 错误处理
+- CSV文件加载失败时显示默认实验列表
+- 网络错误时提供友好提示
+- 数据解析错误时使用备用数据

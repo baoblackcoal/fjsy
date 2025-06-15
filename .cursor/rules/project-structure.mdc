@@ -1,0 +1,43 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# FJSY Chat AI 项目结构指南
+
+## 项目概述
+FJSY Chat AI是福建水利电力职业技术学院的智能实验教学系统，为学生提供AI驱动的实验预习和问答辅导。
+
+## 核心页面结构
+
+### 主要HTML文件
+- [index.html](mdc:index.html) - 系统主页，展示学院信息和AI助教介绍
+- [login.html](mdc:login.html) - 登录页面，支持学生和教师角色选择
+- [student-courses.html](mdc:student-courses.html) - 学生课程选择页面，两级选择：课程→实验→学习模式
+- [student-chat.html](mdc:student-chat.html) - AI聊天界面，支持预习模式和问答模式
+- [teacher-dashboard.html](mdc:teacher-dashboard.html) - 教师管理后台
+- [dashboard.html](mdc:dashboard.html) - 数据可视化看板
+
+### 数据文件
+- [data/courses.csv](mdc:data/courses.csv) - 课程基础信息
+- [data/qa_records.csv](mdc:data/qa_records.csv) - 问答记录数据
+- [data/analog_exp.csv](mdc:data/analog_exp.csv) - 模拟电子技术实验列表
+- [data/digital_exp.csv](mdc:data/digital_exp.csv) - 数字电路实验列表
+- [data/plc_exp.csv](mdc:data/plc_exp.csv) - PLC控制技术实验列表
+- [data/power_exp.csv](mdc:data/power_exp.csv) - 电力电子技术实验列表
+- [data/automation_exp.csv](mdc:data/automation_exp.csv) - 自动控制原理实验列表
+- [data/communication_exp.csv](mdc:data/communication_exp.csv) - 通信原理实验列表
+
+## 页面流程
+1. 用户访问 [index.html](mdc:index.html) 了解系统
+2. 通过 [login.html](mdc:login.html) 选择角色登录
+3. 学生进入 [student-courses.html](mdc:student-courses.html) 选择课程和实验
+4. 在 [student-chat.html](mdc:student-chat.html) 与AI助教交互学习
+5. 教师通过 [teacher-dashboard.html](mdc:teacher-dashboard.html) 管理系统
+6. 通过 [dashboard.html](mdc:dashboard.html) 查看数据分析
+
+## 技术栈
+- 前端：HTML5 + TailwindCSS + JavaScript
+- 数据存储：CSV文件 + localStorage
+- 图标：Font Awesome 6.0
+- Markdown解析：marked.js
