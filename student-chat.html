@@ -36,6 +36,71 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        
+        /* Markdown样式 */
+        .ai-response h1, .ai-response h2, .ai-response h3 {
+            font-weight: bold;
+            margin: 1rem 0 0.5rem 0;
+            color: #1f2937;
+        }
+        .ai-response h1 { font-size: 1.5rem; }
+        .ai-response h2 { font-size: 1.3rem; }
+        .ai-response h3 { font-size: 1.1rem; }
+        
+        .ai-response p {
+            margin: 0.5rem 0;
+            line-height: 1.6;
+        }
+        
+        .ai-response ul, .ai-response ol {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+        }
+        
+        .ai-response li {
+            margin: 0.25rem 0;
+        }
+        
+        .ai-response strong {
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .ai-response em {
+            font-style: italic;
+        }
+        
+        .ai-response code {
+            background-color: #f3f4f6;
+            color: #e11d48;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        .ai-response pre {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+        
+        .ai-response pre code {
+            background: none;
+            color: #334155;
+            padding: 0;
+        }
+        
+        .ai-response blockquote {
+            border-left: 4px solid #3b82f6;
+            padding-left: 1rem;
+            margin: 1rem 0;
+            font-style: italic;
+            color: #6b7280;
+        }
     </style>
 </head>
 <body class="bg-gray-50 flex flex-col h-screen">
@@ -137,6 +202,10 @@
         let currentSubMode = 'guide'; // 'guide' 或 'qa' (仅在qa模式下有效)
         let isTyping = false;
 
+        // API配置
+        const API_URL = "https://dashscope.aliyuncs.com/api/v1/apps/6fa3490dc00b4b189167c450618057d5/completion";
+        const API_KEY = "sk-26f29c480fdb450aa7e165a9e4b2b091";
+
         // 常用问题数据
         const commonQuestions = {
             'analog-circuits': [
@@ -161,6 +230,9 @@
                 '模拟量处理的方法？'
             ]
         };
+
+        // 聊天历史记录
+        let chatHistory = [];
 
         // 页面初始化
         document.addEventListener('DOMContentLoaded', function() {
@@ -259,6 +331,8 @@
 
         // 发送预定义问题
         function sendPredefinedQuestion(question) {
+            if (isTyping) return; // 如果正在输入，不允许发送新消息
+            
             document.getElementById('messageInput').value = question;
             sendMessage();
         }
@@ -282,15 +356,23 @@
             addMessage(message, 'user');
             input.value = '';
             
-            // 模拟AI回复
-            simulateAIResponse(message);
+            // 调用真实AI API
+            callAIAPI(message);
         }
 
         // 添加消息
-        function addMessage(content, sender) {
+        function addMessage(content, sender, isMarkdown = false) {
             const chatMessages = document.getElementById('chatMessages');
             const messageDiv = document.createElement('div');
             messageDiv.className = 'flex items-start mb-4 message-fade-in';
+            
+            // 处理内容格式化
+            let formattedContent = content;
+            if (isMarkdown && sender === 'ai') {
+                formattedContent = formatMarkdownResponse(content);
+            } else {
+                formattedContent = content.replace(/\n/g, '<br>');
+            }
             
             if (sender === 'user') {
                 messageDiv.className += ' flex-row-reverse';
@@ -300,7 +382,7 @@
                     </div>
                     <div class="bg-green-50 p-4 rounded-lg max-w-3xl">
                         <div class="font-semibold text-green-800 mb-2">您</div>
-                        <div class="text-gray-700">${content}</div>
+                        <div class="text-gray-700">${formattedContent}</div>
                     </div>
                 `;
             } else {
@@ -310,13 +392,35 @@
                     </div>
                     <div class="bg-blue-50 p-4 rounded-lg max-w-3xl">
                         <div class="font-semibold text-blue-800 mb-2">AI助教</div>
-                        <div class="text-gray-700">${content}</div>
+                        <div class="text-gray-700 ai-response">${formattedContent}</div>
                     </div>
                 `;
             }
             
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            return messageDiv;
+        }
+
+        // 格式化Markdown响应
+        function formatMarkdownResponse(text) {
+            // 使用marked.js解析markdown
+            if (typeof marked !== 'undefined') {
+                // 配置marked选项
+                marked.setOptions({
+                    breaks: true,
+                    gfm: true
+                });
+                return marked.parse(text);
+            } else {
+                // 如果marked未加载，则进行简单的格式化
+                return text
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                    .replace(/`(.*?)`/g, '<code>$1</code>')
+                    .replace(/\n/g, '<br>');
+            }
         }
 
         // 添加打字动画
@@ -341,6 +445,8 @@
             `;
             chatMessages.appendChild(typingDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            return typingDiv;
         }
 
         // 移除打字动画
@@ -351,47 +457,226 @@
             }
         }
 
-        // 模拟AI响应
-        function simulateAIResponse(userMessage) {
+        // 调用真实AI API
+        function callAIAPI(userMessage) {
             isTyping = true;
-            addTypingIndicator();
             
-            // 模拟AI思考时间
-            setTimeout(() => {
-                removeTypingIndicator();
-                
-                let response = generateAIResponse(userMessage);
-                addMessage(response, 'ai');
-                
-                // 显示满意度评价
-                showSatisfactionRating();
-                
-                isTyping = false;
-            }, 1000 + Math.random() * 2000);
-        }
-
-        // 生成AI响应
-        function generateAIResponse(userMessage) {
-            const responses = {
-                preview: [
-                    `很好的问题！让我为您详细解释一下${currentCourse?.name || '这个实验课程'}的相关知识点。首先，我们需要理解基本的理论原理...`,
-                    `在开始实验之前，建议您先了解以下几个关键概念。这将帮助您更好地理解实验过程中的现象...`,
-                    `让我们一步步来分析这个问题。根据您的提问，我建议从以下几个方面进行思考...`
-                ],
-                qa: currentSubMode === 'guide' ? [
-                    `这是一个很实际的问题！让我引导您一步步分析。您觉得可能的原因有哪些呢？`,
-                    `在解决这个问题之前，我们先回顾一下相关的理论知识。您还记得我们在预习中提到的XX原理吗？`,
-                    `遇到这种情况很正常！让我们系统地排查一下可能的原因。建议从以下几个步骤开始...`
-                ] : [
-                    `根据您描述的现象，这通常是由以下几种原因导致的：\n\n1. 电路连接问题\n2. 元件参数不当\n3. 测量方法错误\n\n建议您首先检查...`,
-                    `这个问题的解决方法如下：\n\n首先确认电路连接正确，然后检查元件是否损坏，最后验证测量设备的设置...`,
-                    `${currentCourse?.name || '这门课程'}中经常遇到这类问题。标准的处理流程是：\n\n第一步：...\n第二步：...\n第三步：...`
-                ]
+            // 添加打字动画
+            const typingIndicator = addTypingIndicator();
+            
+            // 将用户消息添加到历史记录
+            chatHistory.push({
+                role: 'user',
+                content: userMessage
+            });
+            
+            // 构建系统提示词
+            const systemPrompt = buildSystemPrompt();
+            
+            // 构建请求数据 - 使用新的API格式
+            const requestData = {
+                input: {
+                    prompt: userMessage,
+                    system: systemPrompt,
+                    history: chatHistory.slice(0, -1) // 不包含当前用户消息
+                },
+                parameters: {
+                    incremental_output: true
+                },
+                debug: {}
             };
             
-            const modeResponses = responses[chatMode] || responses.preview;
-            return modeResponses[Math.floor(Math.random() * modeResponses.length)];
+            // 创建AI消息容器
+            const aiMessageDiv = addMessage('', 'ai', true);
+            const aiMessageContent = aiMessageDiv.querySelector('.ai-response');
+            
+            // 调用API
+            fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${API_KEY}`,
+                    'Content-Type': 'application/json',
+                    'X-DashScope-SSE': 'enable'
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                
+                // 移除打字动画
+                typingIndicator.remove();
+                
+                // 设置SSE响应处理
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
+                let fullText = '';
+                
+                function processText() {
+                    return reader.read().then(({ done, value }) => {
+                        if (done) {
+                            if (buffer) {
+                                processSSEChunk(buffer);
+                            }
+                            // 将AI响应添加到历史记录
+                            if (fullText.trim()) {
+                                chatHistory.push({
+                                    role: 'assistant',
+                                    content: fullText
+                                });
+                            }
+                            
+                            // 显示满意度评价
+                            showSatisfactionRating();
+                            isTyping = false;
+                            return;
+                        }
+                        
+                        // 解码接收到的数据块并添加到缓冲区
+                        const chunk = decoder.decode(value, { stream: true });
+                        buffer += chunk;
+                        
+                        // 处理任何完整的SSE消息
+                        const lines = buffer.split('\n\n');
+                        buffer = lines.pop() || ''; // 保留最后一个（可能不完整的）部分
+                        
+                        // 处理每个完整的SSE消息
+                        for (const line of lines) {
+                            processSSEChunk(line);
+                        }
+                        
+                        // 继续读取
+                        return processText();
+                    });
+                }
+                
+                function processSSEChunk(chunk) {
+                    // 在SSE格式中查找数据部分
+                    const dataMatch = chunk.match(/data:(.+)$/m);
+                    if (dataMatch && dataMatch[1]) {
+                        try {
+                            const responseData = JSON.parse(dataMatch[1]);
+                            // 检查不同的响应格式
+                            let newText = '';
+                            if (responseData.output && responseData.output.text) {
+                                newText = responseData.output.text;
+                            } else if (responseData.output && responseData.output.choices && responseData.output.choices[0] && responseData.output.choices[0].message) {
+                                newText = responseData.output.choices[0].message.content;
+                            } else if (responseData.output) {
+                                newText = responseData.output;
+                            }
+                            
+                            if (newText) {
+                                // 将新文本附加到完整响应中
+                                fullText += newText;
+                                
+                                // 用解析的markdown更新AI消息内容
+                                aiMessageContent.innerHTML = formatMarkdownResponse(fullText);
+                                
+                                // 确保代码块的语法高亮正确
+                                document.querySelectorAll('pre code').forEach(block => {
+                                    block.className = 'language-text';
+                                });
+                                
+                                // 滚动到底部
+                                const chatMessages = document.getElementById('chatMessages');
+                                chatMessages.scrollTop = chatMessages.scrollHeight;
+                            }
+                        } catch (e) {
+                            console.error('Error parsing SSE data:', e);
+                        }
+                    }
+                }
+                
+                return processText();
+            })
+            .catch(error => {
+                console.error('Error fetching from AI API:', error);
+                typingIndicator.remove();
+                
+                // 如果API调用失败，显示错误消息
+                aiMessageContent.innerHTML = `
+                    <p>抱歉，我暂时无法连接到服务器，请稍后再试。</p>
+                    <p style="color: #dc2626; font-size: 0.875rem;">错误: ${error.message}</p>
+                `;
+                
+                const chatMessages = document.getElementById('chatMessages');
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                isTyping = false;
+            });
         }
+
+        // 构建系统提示词
+        function buildSystemPrompt() {
+            const courseName = currentCourse?.name || '实验课程';
+            const experimentName = localStorage.getItem('currentExperiment') || '当前实验';
+            
+            let basePrompt = `你是福建水利电力职业技术学院的AI实验助教，专门为学生提供${courseName}的实验指导。当前学生正在进行"${experimentName}"实验。`;
+            
+            if (chatMode === 'preview') {
+                basePrompt += `
+当前模式：预习助教模式
+你的任务：
+1. 帮助学生理解实验的基本原理和理论知识
+2. 解释实验的目的、原理和操作要点
+3. 为学生答疑解惑，提供详细的理论说明
+4. 引导学生做好实验前的准备工作
+5. 使用通俗易懂的语言，结合实际例子进行说明
+
+回答要求：
+- 详细解释理论原理，帮助学生建立知识基础
+- 可以适当使用markdown格式美化回答
+- 耐心引导，循序渐进地讲解概念
+- 回答要专业且易于理解`;
+            } else {
+                if (currentSubMode === 'guide') {
+                    basePrompt += `
+当前模式：实验助教模式 - 引导模式
+你的任务：
+1. 通过提问和引导的方式帮助学生思考问题
+2. 不直接给出答案，而是引导学生自己发现问题和解决方案
+3. 提供分析问题的思路和方法
+4. 鼓励学生独立思考和动手实践
+
+回答风格：
+- 多使用引导性问题："你觉得可能的原因是什么？"
+- 给出分析思路："我们可以从这几个方面来考虑..."
+- 循序渐进地引导学生找到答案
+- 培养学生的分析和解决问题的能力`;
+                } else {
+                    basePrompt += `
+当前模式：实验助教模式 - 问答模式
+你的任务：
+1. 直接回答学生的具体问题
+2. 提供清晰、准确的解决方案和操作步骤
+3. 帮助学生快速解决实验中遇到的技术问题
+4. 给出具体的操作指导和注意事项
+
+回答要求：
+- 直接、明确地回答问题
+- 提供具体的解决步骤和操作方法
+- 可以使用列表、代码块等格式清晰展示信息
+- 及时高效地解决学生问题`;
+                }
+            }
+            
+            basePrompt += `
+
+注意事项：
+- 保持友好、耐心的语气
+- 确保回答的准确性和专业性
+- 根据学生的理解水平调整解释的深度
+- 鼓励学生提问和思考
+- 如果遇到超出实验范围的问题，可以引导学生查阅相关资料`;
+
+            return basePrompt;
+        }
+
+
+
+
 
         // 显示满意度评价
         function showSatisfactionRating() {
