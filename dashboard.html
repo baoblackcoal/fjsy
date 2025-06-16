@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body {
-            background: linear-gradient(135deg,  #0f4c75 50%, #1e40af 75%, #1e3a8a 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%);
             background-size: 400% 400%;
             animation: gradientShift 15s ease infinite;
         }
@@ -20,10 +20,35 @@
         }
         
         .tech-card {
-            background: linear-gradient(145deg, rgba(59, 130, 246, 0.1), rgba(30, 64, 175, 0.05));
+            background: linear-gradient(145deg, rgba(14, 165, 233, 0.25), rgba(6, 182, 212, 0.15));
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(14, 165, 233, 0.5);
+            box-shadow: 0 8px 32px rgba(14, 165, 233, 0.2);
+            color: #ffffff;
+        }
+        
+        .tech-card .text-sm {
+            color: #e2e8f0 !important;
+        }
+        
+        .tech-card .text-gray-400 {
+            color: #cbd5e1 !important;
+        }
+        
+        .tech-card .text-blue-300 {
+            color: #93c5fd !important;
+        }
+        
+        .tech-card .text-green-300 {
+            color: #86efac !important;
+        }
+        
+        .tech-card .text-purple-300 {
+            color: #d8b4fe !important;
+        }
+        
+        .tech-card .text-yellow-300 {
+            color: #fde047 !important;
         }
         
         .glow-border {
@@ -38,7 +63,7 @@
             left: -2px;
             right: -2px;
             bottom: -2px;
-            background: linear-gradient(45deg, #143bb9, #1e40af, #132d83);
+            background: linear-gradient(45deg, #0a73a3, #046779, #05647c, #094c5f);
             background-size: 400% 400%;
             border-radius: inherit;
             z-index: -1;
@@ -57,10 +82,10 @@
         
         @keyframes pulseGlow {
             from {
-                box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+                box-shadow: 0 0 20px rgba(14, 165, 233, 0.4);
             }
             to {
-                box-shadow: 0 0 40px rgba(59, 130, 246, 0.6);
+                box-shadow: 0 0 40px rgba(14, 165, 233, 0.7);
             }
         }
         
@@ -125,23 +150,23 @@
         
         .tech-grid {
             background-image: 
-                linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px);
+                linear-gradient(rgba(14, 165, 233, 0.15) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(14, 165, 233, 0.15) 1px, transparent 1px);
             background-size: 20px 20px;
         }
         
         .progress-bar {
-            background: linear-gradient(90deg, #3b82f6, #06b6d4);
+            background: linear-gradient(90deg, #082836, #0b879c, #0891b2);
             animation: progressGlow 2s ease-in-out infinite alternate;
         }
         
         @keyframes progressGlow {
-            from { box-shadow: 0 0 10px rgba(59, 130, 246, 0.5); }
-            to { box-shadow: 0 0 20px rgba(59, 130, 246, 0.8); }
+            from { box-shadow: 0 0 10px rgba(14, 165, 233, 0.5); }
+            to { box-shadow: 0 0 20px rgba(14, 165, 233, 0.8); }
         }
         
         .chart-bar {
-            background: linear-gradient(to top, #1e40af, #3b82f6, #62a1ad);
+            background: linear-gradient(to top, #0e7490, #0891b2, #06b6d4, #0ea5e9);
             animation: chartGrow 2s ease-out;
         }
         
@@ -196,7 +221,7 @@
             <h2 class="text-5xl font-bold mb-4 bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-600 bg-clip-text text-transparent">
                 智能教学成果展示
             </h2>
-            <p class="text-xl text-blue-200 max-w-4xl mx-auto leading-relaxed">
+            <p class="text-xl text-blue-200 max-w-5xl mx-auto leading-relaxed">
                 基于先进AI技术构建的实验教学系统，为福建水利电力职业技术学院提供智能化、个性化的教学解决方案
             </p>
             <div class="mt-6 flex justify-center space-x-8 text-sm text-cyan-300">
